@@ -1,0 +1,18 @@
+label[data-component="field"] {
+  /* Placeholder */
+  display: flex;
+}
+
+[data-component="field"] {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  & input {
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+}

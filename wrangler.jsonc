@@ -1,0 +1,23 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "cfphotos",
+	"compatibility_date": "2025-12-29",
+	"compatibility_flags": [
+		"nodejs_als"
+	],
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": {
+		"binding": "ASSETS",
+		"directory": ".svelte-kit/cloudflare"
+	},
+	"workers_dev": true,
+	"preview_urls": true,
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "cfphotos-database",
+			"database_id": "1059473b-f177-4c8b-9d3e-3af8e024e5b8",
+			"migrations_dir": "src/lib/server/db/migrations"
+		}
+	]
+}
