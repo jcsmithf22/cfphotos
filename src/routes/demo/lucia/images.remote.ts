@@ -21,6 +21,41 @@ const schema = v.object({
   ),
 });
 
+export const deleteImage = form(
+  v.object({
+    id: v.string()
+  }),
+  async ({ id }) => {
+
+    const { locals, platform } = getRequestEvent();
+    if (!locals.session) {
+      error(401, "Unauthorized");
+    }
+
+    if (!platform) {
+      error(500, "Platform not found");
+    }
+
+    const imageApiToken = platform.env.IMAGE_API_TOKEN;
+    const cloudflareAccountId = platform.env.CLOUDFLARE_ACCOUNT_ID;
+
+    const client = new Cloudflare({
+      apiToken: imageApiToken,
+    });
+
+    try {
+      const params: Cloudflare.Images.V1.V1DeleteParams = {
+        account_id: cloudflareAccountId,
+      };
+      await client.images.v1.delete(id, params)
+      return { success: true }
+    } catch (err) {
+      console.error(err);
+      error(500, "Failed to delete image");
+    }
+  }
+)
+
 export const uploadImage = form(schema, async ({ image }) => {
   const { locals, platform } = getRequestEvent();
   if (!locals.session) {
@@ -49,7 +84,7 @@ export const uploadImage = form(schema, async ({ image }) => {
       file: file,
     };
 
-    const _ = await client.images.v1.create(params);
+    await client.images.v1.create(params);
     return { success: true };
   } catch (err) {
     console.error(err);

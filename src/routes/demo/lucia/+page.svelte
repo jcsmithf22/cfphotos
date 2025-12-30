@@ -2,7 +2,7 @@
   import { enhance } from "$app/forms";
   import * as v from "valibot";
   import type { PageServerData } from "./$types";
-  import { uploadImage } from "./images.remote";
+  import { uploadImage, deleteImage } from "./images.remote";
 
   let { data }: { data: PageServerData } = $props();
 
@@ -21,9 +21,9 @@
           "image/svg",
           "image/heic",
         ],
-        "Please upload an image."
+        "Please upload an image.",
       ),
-      v.maxSize(100 * 1024 * 1024, "Image size is too large (max 100mb).")
+      v.maxSize(100 * 1024 * 1024, "Image size is too large (max 100mb)."),
     ),
   });
 </script>
@@ -52,6 +52,30 @@
 <form method="post" action="?/logout" use:enhance>
   <button>Sign out</button>
 </form>
+
+<div>
+  {#each data.images as image}
+    {#if image.thumbnail}
+      {@const form = deleteImage.for(image.id)}
+      <div>
+        <p>{image.filename}</p>
+        <img
+          src={image.thumbnail}
+          alt={image.filename}
+          width="120"
+          height="120"
+        />
+        <form {...form}>
+          <input type="hidden" name="id" value={image.id} />
+          <button disabled={!!form.pending}>Delete</button>
+          {#if form.pending}
+            <p>Loading...</p>
+          {/if}
+        </form>
+      </div>
+    {/if}
+  {/each}
+</div>
 
 <style>
   form {

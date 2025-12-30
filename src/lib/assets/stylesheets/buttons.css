@@ -42,6 +42,11 @@ input[type="file"]::file-selector-button:hover {
   color: var(--foreground);
   width: fit-content;
 
+  &[disabled] {
+    background-color: var(--muted);
+    --hover-filter: none;
+  }
+
   &.full-width {
     width: 100%;
   }
