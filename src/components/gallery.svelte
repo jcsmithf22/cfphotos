@@ -148,6 +148,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      --hover-filter: none;
 
       background-color: var(--destructive-faint);
       border-color: var(--destructive);

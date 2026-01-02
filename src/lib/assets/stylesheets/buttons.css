@@ -5,7 +5,8 @@
   background-color: var(--border);
   gap: 1px;
 
-  & [data-component="button"], button:not(.unstyled) {
+  & [data-component="button"],
+  button:not(.unstyled) {
     border: none;
     border-radius: 0;
 
@@ -33,13 +34,20 @@ input[type="file"]::file-selector-button:hover {
   filter: var(--hover-filter);
 }
 
-[data-component="button"], button:not(.unstyled) {
+[data-component="button"],
+button:not(.unstyled) {
+  --button-border: var(--border);
+  --button-highlight: var(--border);
+  --button-background: var(--background);
+  --button-color: var(--foreground);
+  --button-padding: 8px;
   flex: 1;
-  border: 1px solid var(--border);
+  border: 1px solid var(--button-border);
   border-radius: var(--radius);
-  padding: 0.5rem;
-  background-color: var(--background);
-  color: var(--foreground);
+  padding-block: var(--button-padding);
+  padding-inline: calc(var(--button-padding) * 1.5);
+  background-color: var(--button-background);
+  color: var(--button-color);
   width: fit-content;
 
   &[disabled] {
@@ -56,17 +64,39 @@ input[type="file"]::file-selector-button:hover {
   }
 
   &[data-variant="primary"] {
-    background-color: var(--primary);
-    color: var(--primary-foreground);
+    --hover-filter: contrast(0.8);
+    --button-border: var(--primary);
+    --button-highlight: var(--muted-foreground);
+    --button-background: var(--primary);
+    --button-color: var(--primary-foreground);
   }
 
   &[data-variant="secondary"] {
-    background-color: var(--secondary);
-    color: var(--secondary-foreground);
+    --button-border: var(--border);
+    --button-highlight: var(--background);
+    --button-background: var(--secondary);
+    --button-color: var(--secondary-foreground);
   }
 
   &[data-variant="destructive"] {
-    background-color: var(--destructive);
-    color: var(--foreground);
+    --button-border: var(--destructive);
+    --button-highlight: var(--background);
+    --button-highlight-opacity: 0.5;
+    --button-background: var(--destructive);
+    --button-color: var(--background);
+  }
+
+  &[data-size="sm"] {
+    --button-padding: 4px;
+    font-size: 14px;
+  }
+
+  &[data-size="md"] {
+    --button-padding: 8px;
+  }
+
+  &[data-size="lg"] {
+    --button-padding: 12px;
+    font-size: 20px;
   }
 }
