@@ -2,20 +2,58 @@
   import { enhance } from "$app/forms";
   import type { PageServerData } from "./$types";
   import { uploadImage } from "./images.remote";
-  import { uploadImageSchema } from "$lib/images";
+  import { uploadImageSchema, type Image } from "$lib/images";
   import Gallery from "../../../components/gallery.svelte";
   import Button from "../../../components/button.svelte";
   import Card from "../../../components/card.svelte";
+  import { goto, preloadData, pushState } from "$app/navigation";
+  import { page } from "$app/state";
+  import Modal from "../../../components/modal.svelte";
 
   let { data }: { data: PageServerData } = $props();
 
   const { images } = uploadImage.fields;
-  const imagesIssues = $derived(images.issues());
+
+  type ImageData = {
+    image: Image;
+  };
+
+  // Handle click on calendar box - shallow routing
+  async function handleImageClick(e: MouseEvent, id: string) {
+    // Bail for new tab/window
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+
+    e.preventDefault();
+
+    const href = `/demo/lucia/${id}`;
+
+    // Load the day's data first
+    const result = await preloadData(href);
+
+    if (result.type === "loaded" && result.status === 200) {
+      pushState(href, { selectedImage: result.data as ImageData });
+    } else {
+      // Fallback to full navigation
+      goto(href);
+    }
+  }
 </script>
 
 <div class="container">
   <div class="content">
-    <Gallery images={data.images} />
+    <div data-component="heading">
+      <div data-slot="eyebrow">
+      </div>
+      <div data-slot="main">
+        <h1 class="Text size-4">Gallery</h1>
+        <ul class="Text size-1">
+          <li><a href="/">Home</a></li>
+          <li><a href="/">Gallery</a></li>
+          <li><a href="/">Grid</a></li>
+        </ul>
+      </div>
+    </div>
+    <Gallery onclick={handleImageClick} images={data.images} />
   </div>
 
   <div class="sidebar">
@@ -39,7 +77,7 @@
         <h2 class="Text size-2">Upload Images</h2>
         <div>
           <input {...images.as("file multiple")} accept="image/*" multiple />
-          {#each imagesIssues as issue}
+          {#each uploadImage.fields.allIssues() as issue}
             <p style="color: red">{issue.message}</p>
           {/each}
         </div>
@@ -49,6 +87,18 @@
   </div>
 </div>
 
+{#if page.state.selectedImage}
+  {@const selectedImage = page.state.selectedImage.image}
+  <Modal onclose={() => history.back()}>
+    <div>Modal: {selectedImage?.id}</div>
+    <div>
+      {#if selectedImage?.display}
+        <img alt={selectedImage.filename} src={selectedImage.display} />
+      {/if}
+    </div>
+  </Modal>
+{/if}
+
 <style>
   .container {
     display: flex;
@@ -56,10 +106,50 @@
 
   .content {
     width: 100%;
+    padding-inline: 16px;
+    padding-block-start: 48px;
+    padding-block-end: 16px;
+
+    & [data-component="heading"] {
+      & [data-slot="eyebrow"] {
+        & span {
+          /* font-weight: 600; */
+          /* text-transform: uppercase; */
+          line-height: 1;
+          font-size: 16px;
+        }
+      }
+
+      & [data-slot="main"] {
+        display: flex;
+        align-items: baseline;
+        margin-block-end: 24px;
+      }
+
+      & ul {
+        display: flex;
+        gap: 12px;
+        margin: 0;
+        margin-inline-start: 48px;
+        padding: 0;
+        list-style: none;
+        font-size: 18px;
+
+        & a {
+          color: var(--foreground);
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
   }
 
   .sidebar {
     display: flex;
+    flex-shrink: 0;
     flex-direction: column;
     gap: 12px;
     padding: 16px;

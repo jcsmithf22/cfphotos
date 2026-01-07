@@ -1,4 +1,7 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
+
+import type { Image } from "$lib/images";
+
 // for information about these interfaces
 declare global {
   namespace App {
@@ -11,12 +14,18 @@ declare global {
       };
       ctx: ExecutionContext;
       caches: CacheStorage;
-      cf?: IncomingRequestCfProperties
+      cf?: IncomingRequestCfProperties;
     }
 
     interface Locals {
-      user: import('$lib/server/auth').SessionValidationResult['user'];
-      session: import('$lib/server/auth').SessionValidationResult['session']
+      user: import("$lib/server/auth").SessionValidationResult["user"];
+      session: import("$lib/server/auth").SessionValidationResult["session"];
+    }
+
+    interface PageState {
+      selectedImage: {
+        image: Image;
+      };
     }
 
     // interface Error {}
@@ -27,4 +36,4 @@ declare global {
   }
 }
 
-export { };
+export {};

@@ -1,3 +1,5 @@
+@layer base, layout, components, utilities;
+
 @import "reset.css";
 @import "global.css";
 @import "text.css";

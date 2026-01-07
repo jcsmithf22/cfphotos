@@ -4,7 +4,13 @@
   import type { Attachment } from "svelte/attachments";
   import { deleteImage } from "../routes/demo/lucia/images.remote";
 
-  let { images }: { images: Array<Image> } = $props();
+  let {
+    images,
+    onclick,
+  }: {
+    images: Array<Image>;
+    onclick: (e: MouseEvent, id: string) => Promise<void>;
+  } = $props();
 
   const config = {
     type: spring,
@@ -34,16 +40,23 @@
       {@const form = deleteImage.for(image.id)}
       <div>
         <div data-slot="image">
-          <img
-            src={image.thumbnail}
-            alt={image.filename}
-            width="120"
-            height="120"
-          />
+          <button
+            data-slot="trigger"
+            class="unstyled"
+            onclick={(e) => onclick(e, image.id)}
+          >
+            <img
+              src={image.thumbnail}
+              alt={image.filename}
+              width="120"
+              height="120"
+            />
+          </button>
           <p class="Text size-1 dense">{image.filename}</p>
           <form {...form}>
             <input type="hidden" name="id" value={image.id} />
             <button
+              data-slot="delete"
               disabled={!!form.pending}
               aria-label="Delete image"
               {@attach boop}
@@ -114,7 +127,7 @@
 <style>
   [data-component="gallery"] {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fill, 130px);
     gap: 8px;
   }
 
@@ -137,7 +150,10 @@
       line-height: 1.2;
     }
 
-    & button {
+    & [data-slot="trigger"] {
+    }
+
+    & [data-slot="delete"] {
       position: absolute;
       top: 2px;
       right: 2px;

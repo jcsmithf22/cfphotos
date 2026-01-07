@@ -33,4 +33,8 @@
       opacity: var(--button-highlight-opacity, 1);
     }
   }
+
+  :global(.dark) button[data-variant] {
+    --offset: 1px;
+  }
 </style>
