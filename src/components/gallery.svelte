@@ -1,8 +1,20 @@
 <script lang="ts">
   import type { Image } from "$lib/images";
-  import { animate, hover, spring, type AnimationSequence } from "motion";
+  import {
+    animate,
+    spring,
+    type AnimationParams,
+    type EasingParam,
+    type SpringParams,
+  } from "animejs";
+  import {
+    hover,
+    animate as mAnimate,
+    spring as mSpring,
+    type AnimationSequence,
+  } from "motion";
   import type { Attachment } from "svelte/attachments";
-  import { deleteImage } from "../routes/demo/lucia/images.remote";
+  import { deleteImage } from "../routes/admin/gallery/images.remote";
 
   let {
     images,
@@ -21,15 +33,26 @@
 
   const boop: Attachment = (element) => {
     return hover(element, () => {
-      const sequence: AnimationSequence = [
-        [
-          element,
-          { rotate: 25, scale: 1.1 },
-          { duration: 0.15, ease: "easeOut" },
-        ],
-        [element, { rotate: 0, scale: 1 }, config],
-      ];
-      animate(sequence);
+      // const sequence: AnimationSequence = [
+      //   [
+      //     element,
+      //     { rotate: 25, scale: 1.1 },
+      //     { duration: 0.15, ease: "easeOut" },
+      //   ],
+      //   [element, { rotate: 0, scale: 1 }, config],
+      // ];
+      // mAnimate(sequence);
+      const duration = 150;
+      const ease: EasingParam = "outSine";
+      const config: SpringParams = { stiffness: 300, damping: 10, mass: 1 };
+
+      const params: AnimationParams = {
+        rotate: [{ to: 25 }, { to: 0, ease: spring(config) }],
+        scale: [{ to: 1.1 }, { to: 1, ease: spring(config) }],
+        duration,
+        ease,
+      };
+      animate(element, params);
     });
   };
 </script>
