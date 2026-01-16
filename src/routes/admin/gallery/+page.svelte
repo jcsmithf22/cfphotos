@@ -25,7 +25,7 @@
 
     e.preventDefault();
 
-    const href = `/demo/lucia/${id}`;
+    const href = `/admin/gallery/${id}`;
 
     // Load the day's data first
     const result = await preloadData(href);

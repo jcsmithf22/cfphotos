@@ -7,6 +7,7 @@ import { encodeBase32LowerCase } from "@oslojs/encoding";
 import { error, invalid, redirect } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import * as v from "valibot";
+import { resolve } from "$app/paths";
 
 function generateUserId() {
   // ID with 120 bits of entropy, or about the same as UUID v4.
@@ -51,8 +52,8 @@ export const login = form(
     const session = await auth.createSession(db, sessionToken, existingUser.id);
     auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
-    return redirect(302, "/demo/lucia");
-  }
+    return redirect(302, resolve("/admin/gallery"));
+  },
 );
 
 export const register = form(
@@ -63,13 +64,13 @@ export const register = form(
       v.maxLength(31, "Username must be at most 31 characters"),
       v.regex(
         /^[a-z0-9_-]+$/,
-        "Username must be alphanumeric and can contain underscores and hyphens"
-      )
+        "Username must be alphanumeric and can contain underscores and hyphens",
+      ),
     ),
     password: v.pipe(
       v.string("Password is required"),
       v.minLength(6, "Password must be at least 6 characters"),
-      v.maxLength(255, "Password must be at most 255 characters")
+      v.maxLength(255, "Password must be at most 255 characters"),
     ),
   }),
   async ({ username, password }) => {
@@ -97,6 +98,6 @@ export const register = form(
     } catch {
       error(500, "An error has occurred");
     }
-    return redirect(302, "/demo/lucia");
-  }
+    return redirect(302, resolve("/admin/gallery"));
+  },
 );
