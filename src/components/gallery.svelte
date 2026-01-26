@@ -7,14 +7,9 @@
     type EasingParam,
     type SpringParams,
   } from "animejs";
-  import {
-    hover,
-    animate as mAnimate,
-    spring as mSpring,
-    type AnimationSequence,
-  } from "motion";
   import type { Attachment } from "svelte/attachments";
   import { deleteImage } from "../routes/admin/gallery/images.remote";
+  import { hover } from "$lib/hover";
 
   let {
     images,
@@ -23,13 +18,6 @@
     images: Array<Image>;
     onclick: (e: MouseEvent, id: string) => Promise<void>;
   } = $props();
-
-  const config = {
-    type: spring,
-    stiffness: 300,
-    damping: 10,
-    mass: 1,
-  };
 
   const boop: Attachment = (element) => {
     return hover(element, () => {
@@ -46,12 +34,21 @@
       const ease: EasingParam = "outSine";
       const config: SpringParams = { stiffness: 300, damping: 10, mass: 1 };
 
+      const scale = 1.1;
+      const rotation = 25;
+
       const params: AnimationParams = {
-        rotate: [{ to: 25 }, { to: 0, ease: spring(config) }],
-        scale: [{ to: 1.1 }, { to: 1, ease: spring(config) }],
-        duration,
-        ease,
+        keyframes: [
+          { scale, rotate: rotation, duration, ease },
+          { scale: 1, rotate: 0, ease: spring(config) },
+        ],
       };
+      // const params: AnimationParams = {
+      //   rotate: [{ to: 25 }, { to: 0, ease: spring(config) }],
+      //   scale: [{ to: 1.1 }, { to: 1, ease: spring(config) }],
+      //   duration,
+      //   ease,
+      // };
       animate(element, params);
     });
   };
